@@ -1,91 +1,123 @@
-export type Product = {
-  id: number;
+export interface User {
+  id: string;
   name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  images?: string[];
-  rating: number;
-  category: string;
-  brand?: string;
-  inStock: boolean;
-  fastDelivery?: boolean;
-  freeShipping?: boolean;
-  description?: string;
-  specifications?: Record<string, string>;
-  reviews?: Review[];
-  relatedProducts?: number[];
-};
+  email: string;
+  avatar?: string;
+  role: 'user' | 'admin';
+  createdAt: string;
+  updatedAt: string;
+}
 
-export type Review = {
-  id: number;
-  user: string;
-  rating: number;
-  comment: string;
-  date: string;
-};
+export interface AuthResponse {
+  user: User;
+  token: string;
+  refreshToken: string;
+}
 
-export type CartItem = Product & {
-  quantity: number;
-};
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
-export type WishlistItem = Product & {
-  addedAt: string;
-};
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  cpf?: string;
+  birthDate?: string;
+  newsletter?: boolean;
+}
 
-export type Category = {
-  id: number;
+export interface Product {
+  id: string;
   name: string;
   slug: string;
-  description: string;
-  image: string;
-  parentId?: number;
-};
-
-export type FilterOption = {
-  id: string;
-  name: string;
-  value: string;
-  count: number;
-};
-
-export type FilterGroup = {
-  id: string;
-  name: string;
-  type: 'checkbox' | 'radio' | 'range';
-  options: FilterOption[];
-};
-
-export type Coupon = {
-  code: string;
+  price: number;
+  originalPrice: number;
   discount: number;
-  type: 'percentage' | 'fixed' | 'shipping';
-  minPurchase?: number;
-  validUntil?: string;
-};
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+  stockQuantity: number;
+  description: string;
+  shortDescription: string;
+  features: string[];
+  specifications: Record<string, string>;
+  images: string[];
+  category: string;
+  brand: string;
+  sku: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export type Address = {
-  id: string;
-  street: string;
-  number: string;
-  complement?: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  isDefault: boolean;
-};
+export interface CartItem extends Omit<Product, 'stockQuantity'> {
+  quantity: number;
+  stockQuantity?: number;
+}
 
-export type Order = {
+export interface Cart {
   id: string;
   items: CartItem[];
   subtotal: number;
-  shipping: number;
   discount: number;
+  shipping: number;
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  paymentMethod: string;
-  shippingAddress: Address;
+  totalItems: number;
+  coupon?: string;
   createdAt: string;
   updatedAt: string;
-};
+}
+
+export interface OrderItem {
+  id: string;
+  product: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  id: string;
+  status: string;
+  total: number;
+  subtotal: number;
+  discount: number;
+  shipping: number;
+  couponCode?: string;
+  couponDiscount?: number;
+  createdAt: string;
+  updatedAt: string;
+  items: OrderItem[];
+  shippingAddress: {
+    street: string;
+    number: string;
+    complement?: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  billingAddress?: {
+    street: string;
+    number: string;
+    complement?: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  paymentMethod: {
+    type: string;
+    installments?: number;
+    cardLastFour?: string;
+  };
+  trackingCode?: string;
+  trackingUrl?: string;
+}

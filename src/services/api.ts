@@ -1,81 +1,18 @@
-import axios, { AxiosError } from 'axios';
-import type { AxiosInstance, AxiosRequestConfig } from 'axios';
-
-// Interfaces de tipos
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: 'user' | 'admin';
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-  refreshToken: string;
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-  phone?: string;
-  cpf?: string;
-  birthDate?: string;
-  newsletter?: boolean;
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  price: number;
-  originalPrice: number;
-  discount: number;
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-  stockQuantity: number;
-  description: string;
-  shortDescription: string;
-  features: string[];
-  specifications: Record<string, string>;
-  images: string[];
-  category: string;
-  brand: string;
-  sku: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CartItem extends Omit<Product, 'stockQuantity'> {
-  quantity: number;
-}
-
-export interface Cart {
-  id: string;
-  items: CartItem[];
-  subtotal: number;
-  discount: number;
-  shipping: number;
-  total: number;
-  totalItems: number;
-  coupon?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import axios from 'axios';
+import type { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
+import type {
+  User,
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  Product,
+  Cart,
+  Order,
+} from '@/types';
 
 // Configuração base do axios
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3333/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
@@ -110,7 +47,7 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('@techgamer:refreshToken');
         if (refreshToken) {
           const response = await axios.post<AuthResponse>(
-            `${process.env.REACT_APP_API_URL || 'http://localhost:3333/api'}/auth/refresh-token`,
+            `${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/refresh-token`,
             { refreshToken }
           );
           
@@ -125,12 +62,12 @@ api.interceptors.response.use(
           
           return api(originalRequest);
         }
-      } catch (error) {
-        console.error('Falha ao renovar token:', error);
+      } catch (refreshError) {
+        console.error('Falha ao renovar token:', refreshError);
         localStorage.removeItem('@techgamer:token');
         localStorage.removeItem('@techgamer:refreshToken');
         localStorage.removeItem('@techgamer:user');
-        window.location.href = '/login';
+        window.location.href = '/auth/login';
       }
     }
     
@@ -312,6 +249,7 @@ const orderService = {
         holderName: string;
         expirationDate: string;
         cvv: string;
+        token?: string;
       };
     };
     couponCode?: string;
@@ -347,56 +285,8 @@ const orderService = {
     return response.data;
   },
   
-  getOrderById: async (id: string): Promise<{
-    id: string;
-    status: string;
-    total: number;
-    subtotal: number;
-    discount: number;
-    shipping: number;
-    couponCode?: string;
-    couponDiscount?: number;
-    createdAt: string;
-    updatedAt: string;
-    items: Array<{
-      id: string;
-      product: {
-        id: string;
-        name: string;
-        image: string;
-      };
-      quantity: number;
-      price: number;
-    }>;
-    shippingAddress: {
-      street: string;
-      number: string;
-      complement?: string;
-      neighborhood: string;
-      city: string;
-      state: string;
-      zipCode: string;
-      country: string;
-    };
-    billingAddress?: {
-      street: string;
-      number: string;
-      complement?: string;
-      neighborhood: string;
-      city: string;
-      state: string;
-      zipCode: string;
-      country: string;
-    };
-    paymentMethod: {
-      type: string;
-      installments?: number;
-      cardLastFour?: string;
-    };
-    trackingCode?: string;
-    trackingUrl?: string;
-  }> => {
-    const response = await api.get(`/orders/${id}`);
+  getOrderById: async (id: string): Promise<Order> => {
+    const response = await api.get<Order>(`/orders/${id}`);
     return response.data;
   },
 };
@@ -410,3 +300,4 @@ const services = {
 };
 
 export default services;
+export { api };

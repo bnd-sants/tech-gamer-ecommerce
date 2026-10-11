@@ -1,54 +1,24 @@
-# React + TypeScript + Vite
+# NÚCLEO — conceito de e-commerce de componentes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto de portfólio e base potencial para um template. A experiência apresenta uma loja de componentes para PC com direção visual premium, showroom, catálogo, busca, filtros, detalhe de produto, comparador, montador de setup, carrinho e uma conclusão **demonstrativa**. Não existem vendas, cobrança, frete ou reserva de estoque.
 
-Currently, two official plugins are available:
+## Rodar localmente
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```sh
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Para conferir o pacote: `npm run build`. O frontend usa Vue 3, TypeScript, Vite, Pinia e Vuetify. A API Hono/Drizzle em `../tech-gamer-ecommerce-api` é opcional para navegar pelo catálogo demonstrativo; contas conectadas à API exigem um ambiente configurado.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Fluxo de demonstração
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. Explore produtos e monte um carrinho.
+2. Em `/checkout`, revise os itens e clique em **Concluir demonstração**.
+3. Veja a confirmação fictícia e o histórico em `/demo-orders`. A página de login também oferece uma conta de cliente demonstrativa para explorar perfil, favoritos e simulações sem servidor.
+
+As simulações são salvas apenas no `localStorage` deste navegador, com itens, quantidades, valores ilustrativos e data. Nenhum endereço, documento ou cartão é solicitado. Os dados podem sumir quando o navegador for limpo. As sessões demonstrativas de cliente e administrador são locais e não concedem acesso à API.
+
+## Ao reutilizar como template
+
+Substitua dados demonstrativos, textos, imagens e identidade visual conforme a marca. Integre uma API de catálogo, estoque, conta, atendimento e entrega conforme o caso. O pagamento funcional foi deixado fora do escopo deste projeto. O [mapa de capacidades e pontos de extensão](ECOMMERCE-READINESS.md) separa o que existe no protótipo das necessidades de uma operação comercial real.
